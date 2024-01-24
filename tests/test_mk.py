@@ -25,25 +25,26 @@ from num2words import num2words
 class Num2WordsMKTest(TestCase):
     def test_cardinal(self):
         testcases = [
+            ("нула", 0, {}),
             ("пет", 5, {}),
             ("петнаесет", 15, {}),
-            ("дваесет и еден", 21, {"gender": "m"}),
-            ("дваесет и две", 22, {"gender": "n"}),
+            ("дваесет и еден", 21, {"form": "m"}),
+            ("дваесет и две", 22, {"form": "n"}),
             ("триесет и пет", 35, {}),
             ("минус четириесет и четири", -44, {}),
-            ("сто", 100, {"gender": "m"}),
-            ("сто и едно", 101, {"gender": "n"}),
+            ("сто", 100, {"form": "m"}),
+            ("сто и едно", 101, {"form": "n"}),
             ("сто и десет", 110, {}),
             ("сто и петнаесет", 115, {}),
-            ("минус сто дваесет и три", -123, {"gender": "f"}),
+            ("минус сто дваесет и три", -123, {"form": "f"}),
             ("сто педесет и четири", 154, {}),
             ("триста дваесет и пет", 325, {}),
-            ("петстотини дваесет и осум", 528, {"gender": "f"}),
-            ("илјада", 1000, {"gender": "n"}),
-            ("илјада и една", 1001, {"gender": "f"}),
+            ("петстотини дваесет и осум", 528, {"form": "f"}),
+            ("илјада", 1000, {"form": "n"}),
+            ("илјада и една", 1001, {"form": "f"}),
             ("илјада и дваесет", 1020, {}),
             ("илјада дваесет и пет", 1025, {}),
-            ("илјада сто триесет и пет", 1135, {"gender": "m"}),
+            ("илјада сто триесет и пет", 1135, {"form": "m"}),
             ("две илјади и дванаесет", 2012, {}),
             ("седум илјади двесте дваесет и три", 7223, {}),
             (
@@ -89,7 +90,7 @@ class Num2WordsMKTest(TestCase):
                 "шестотини педесет и четири илјади "
                 "триста дваесет и едно",
                 1_234_567_890_987_654_321,
-                {"gender": "n"},
+                {"form": "n"},
             ),
             (
                 "двесте и петнаесет квинтилиони "
@@ -119,7 +120,7 @@ class Num2WordsMKTest(TestCase):
                 "двесте и дваесет илјади "
                 "двесте деведесет и две",
                 719_090_234_693_661_034_820_814_381_220_292,
-                {"gender": "f"},
+                {"form": "f"},
             ),
         ]
 
@@ -135,7 +136,7 @@ class Num2WordsMKTest(TestCase):
             (
                 "петстотини шеесет и една запирка четириесет и две",
                 561.42,
-                {"gender": "f"},
+                {"form": "f"},
             ),
             (
                 "дванаесет илјади петстотини и деветнаесет "
@@ -176,10 +177,10 @@ class Num2WordsMKTest(TestCase):
             ),
         ]
 
-        for expected, number, gender in testcases:
+        for expected, number, form in testcases:
             self.assertEqual(
                 expected,
-                num2words(number, lang="mk", to="ordinal", gender=gender),
+                num2words(number, lang="mk", to="ordinal", form=form),
             )
 
     def test_to_ordinal_num(self):
@@ -195,10 +196,10 @@ class Num2WordsMKTest(TestCase):
             ("101-во", 101, "n"),
         ]
 
-        for expected, number, gender in testcases:
+        for expected, number, form in testcases:
             self.assertEqual(
                 expected,
-                num2words(number, lang="mk", to="ordinal_num", gender=gender),
+                num2words(number, lang="mk", to="ordinal_num", form=form),
             )
 
     def test_to_year(self):

@@ -16,6 +16,7 @@
 # MA 02110-1301 USA
 
 from __future__ import unicode_literals
+from decimal import Decimal
 
 from .base import Num2Word_Base
 from .currency import parse_currency_parts, prefix_currency
@@ -64,16 +65,16 @@ TENS = {
 }
 
 ORDINAL_TENS = {
-    0: ("десетти", "десетта", "десетто"),
-    1: ("единаесетти", "единаесетта", "единаесетто"),
-    2: ("дванаесетти", "дванаесетта", "дванаесетто"),
-    3: ("тринаесетти", "тринаесетта", "тринаесетто"),
-    4: ("четиринаесетти", "четиринаесетта", "четиринаесетто"),
-    5: ("петнаесетти", "петнаесетта", "петнаесетто"),
-    6: ("шеснаесетти", "шеснаесетта", "шеснаесетто"),
-    7: ("седумнаесетти", "седумнаесетта", "седумнаесетто"),
-    8: ("осумнаесетти", "осумнаесетта", "осумнаесетто"),
-    9: ("деветнаесетти", "деветнаесетта", "деветнаесетто"),
+    0: ("десетти", "десетта", "десетто", "десетти"),
+    1: ("единаесетти", "единаесетта", "единаесетто", "единаесетти"),
+    2: ("дванаесетти", "дванаесетта", "дванаесетто", "дванаесетти"),
+    3: ("тринаесетти", "тринаесетта", "тринаесетто", "тринаесетти"),
+    4: ("четиринаесетти", "четиринаесетта", "четиринаесетто", "четиринаесетти"),
+    5: ("петнаесетти", "петнаесетта", "петнаесетто", "петнаесетти"),
+    6: ("шеснаесетти", "шеснаесетта", "шеснаесетто", "шеснаесетти"),
+    7: ("седумнаесетти", "седумнаесетта", "седумнаесетто", "седумнаесетти"),
+    8: ("осумнаесетти", "осумнаесетта", "осумнаесетто", "осумнаесетти"),
+    9: ("деветнаесетти", "деветнаесетта", "деветнаесетто", "деветнаесетти"),
 }
 
 TWENTIES = {
@@ -88,14 +89,14 @@ TWENTIES = {
 }
 
 ORDINAL_TWENTIES = {
-    2: ("дваесетти", "дваесетта", "дваесетто"),
-    3: ("триесетти", "триесетта", "триесетто"),
-    4: ("четириесетти", "четириесетта", "четириесетто"),
-    5: ("педесетти", "педесетта", "педесетто"),
-    6: ("шеесетти", "шеесетта", "шеесетто"),
-    7: ("седумдесетти", "седумдесетта", "седумсетто"),
-    8: ("осумдесетти", "осумдесетта", "осумдесетто"),
-    9: ("деведесетти", "деведесетта", "деведесетто"),
+    2: ("дваесетти", "дваесетта", "дваесетто", "дваесетти"),
+    3: ("триесетти", "триесетта", "триесетто", "триесетти"),
+    4: ("четириесетти", "четириесетта", "четириесетто", "четириесетти"),
+    5: ("педесетти", "педесетта", "педесетто", "педесетти"),
+    6: ("шеесетти", "шеесетта", "шеесетто", "шеесетти"),
+    7: ("седумдесетти", "седумдесетта", "седумсетто", "седумдесетти"),
+    8: ("осумдесетти", "осумдесетта", "осумдесетто", "осумдесетти"),
+    9: ("деведесетти", "деведесетта", "деведесетто", "деведесетти"),
 }
 
 HUNDREDS = {
@@ -111,15 +112,15 @@ HUNDREDS = {
 }
 
 ORDINAL_HUNDREDS = {
-    1: ("стоти", "стота", "стото"),
-    2: ("двестоти", "двестота", "двестото"),
-    3: ("тристоти", "тристота", "тристото"),
-    4: ("четиристоти", "четиристота", "четиристото"),
-    5: ("петстоти", "петстота", "петстото"),
-    6: ("шестоти", "шестота", "шестото"),
-    7: ("седумстоти", "седумстота", "седумстото"),
-    8: ("осумстоти", "осумстота", "осумстото"),
-    9: ("деветстоти", "деветстота", "деветстото"),
+    1: ("стоти", "стота", "стото", "стоти"),
+    2: ("двестоти", "двестота", "двестото", "двестоти"),
+    3: ("тристоти", "тристота", "тристото", "тристоти"),
+    4: ("четиристоти", "четиристота", "четиристото", "четиристоти"),
+    5: ("петстоти", "петстота", "петстото", "петстоти"),
+    6: ("шестоти", "шестота", "шестото", "шестоти"),
+    7: ("седумстоти", "седумстота", "седумстото", "седумстоти"),
+    8: ("осумстоти", "осумстота", "осумстото", "осумстоти"),
+    9: ("деветстоти", "деветстота", "деветстото", "деветстоти"),
 }
 
 SCALE = {
@@ -156,6 +157,9 @@ class Num2Word_MK(Num2Word_Base):
         self.MAXVAL = 10 ** (3 * len(SCALE))
         self.ORDMAXVAL = 10 ** (3 * len(ORDINAL_SCALE))
 
+    def str_to_number(self, value):
+        return Decimal(value.replace(",", "."))
+
     def pluralize(self, number, forms):
         number = number % 100
         form = 1
@@ -163,11 +167,11 @@ class Num2Word_MK(Num2Word_Base):
             form = 0
         return forms[form]
 
-    def to_cardinal(self, value, gender="m"):
+    def to_cardinal(self, value, form="m"):
         try:
             assert int(value) == value
         except (ValueError, TypeError, AssertionError):
-            return self.to_cardinal_float(value)
+            return self.to_cardinal_float(value, form)
 
         out = ""
         if value < 0:
@@ -179,27 +183,25 @@ class Num2Word_MK(Num2Word_Base):
         if value >= self.MAXVAL:
             raise OverflowError(self.errmsg_toobig % (value, self.MAXVAL))
 
-        return out + self._int2word(int(value), gender)
+        return out + self._int2word(int(value), form)
 
-        # n = str(number).replace(",", ".")
-        # if "." in n:
-        #     left, right = n.split(".")
-        #     leading_zero_count = len(right) - len(right.lstrip("0"))
-        #     decimal_part = (ZERO + " ") * leading_zero_count + self._int2word(
-        #         int(right), gender
-        #     )
-        #     return "%s %s %s" % (
-        #         self._int2word(int(left), gender),
-        #         self.pointword,
-        #         decimal_part,
-        #     )
-        # else:
-        #     return
+    def to_cardinal_float(self, value, form):
+        n = str(value)
+        if "." in n:
+            left, right = n.split(".")
+            leading_zero_count = len(right) - len(right.lstrip("0"))
+            decimal_part = (ZERO + " ") * leading_zero_count + self._int2word(
+                int(right), form
+            )
+            return "%s %s %s" % (
+                self._int2word(int(left), form),
+                self.pointword,
+                decimal_part,
+            )
+        else:
+            return
 
-    def to_cardinal_float(self, value):
-        return super().to_cardinal_float(value)
-
-    def to_ordinal(self, value, gender="m", number="s"):
+    def to_ordinal(self, value, form="m"):
         self.verify_ordinal(value)  # FIXME
 
         chunks = list(splitbyx(str(value), 3))
@@ -218,28 +220,29 @@ class Num2Word_MK(Num2Word_Base):
             last_chunk,
             len(chunks) - 1 - last_chunk_idx,
             last_chunk_idx == 0,
-            gender,
-            number,
+            form,
         )
         if prefix:
             return "%s %s" % (prefix, suffix)
         else:
             return suffix
 
-    def to_ordinal_num(self, value, gender="m", number="s"):
-        suffix = self.to_ordinal(value, gender, number)[-2:]
+    def to_ordinal_num(self, value, form="m"):
+        suffix = self.to_ordinal(value, form)[-2:]
         return "%s-%s" % (value, suffix)
 
     def to_year(self, number):
-        return self.to_ordinal(number, gender="f", number="s")
+        return self.to_ordinal(number, form="f")
 
     def _cents_verbose(self, number, currency):
+        if number == 0:
+            return ZERO
         return self._int2word(number, self.CURRENCY_FORMS[currency][1][-1])
 
     def _cents_terse(self, number, currency):
         return "%d" % number
 
-    def _int2word(self, number, gender):
+    def _int2word(self, number, form):
         words = []
         chunks = list(splitbyx(str(number), 3))
         chunk_len = len(chunks)
@@ -265,7 +268,7 @@ class Num2Word_MK(Num2Word_Base):
                 if chunk > 9 or (chunk_len == 0 and number > 9):
                     words.append("и")
 
-                chunk_gender = SCALE[chunk_len][-1] or gender
+                chunk_gender = SCALE[chunk_len][-1] or form
                 chunk_gender_idx = GENDER_TO_IDX[chunk_gender]
                 words.append(ONES[ones_digit][chunk_gender_idx])
 
@@ -274,10 +277,10 @@ class Num2Word_MK(Num2Word_Base):
 
         return " ".join(words)
 
-    def _chunk2ordinal(self, chunk, chunk_idx, first_chunk, gender, number):
+    def _chunk2ordinal(self, chunk, chunk_idx, first_chunk, form):
         words = []
         ones_digit, tens_digit, hundreds_digit = get_digits(chunk)
-        gender_idx = GENDER_TO_IDX[gender] if number == "s" else PLURAL_IDX
+        gender_idx = PLURAL_IDX if form == "p" else GENDER_TO_IDX[form]
 
         if hundreds_digit > 0:
             if chunk % 100 == 0 and chunk_idx == 0:
@@ -353,7 +356,7 @@ class Num2Word_MK(Num2Word_Base):
 
         return "%s%s %s%s %s %s" % (
             minus_str,
-            self.to_cardinal(left, gender=cr1[-1]),
+            self.to_cardinal(left, form=cr1[-1]),
             self.pluralize(left, cr1),
             separator,
             cents_str,
